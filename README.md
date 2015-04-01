@@ -1,0 +1,2 @@
+# redesNeurales
+Redes Neuronales Artificiales. 
