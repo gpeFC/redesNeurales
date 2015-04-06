@@ -8,6 +8,10 @@ Mapas AutoOrganizados (SOMs) - Aplicacion.
 #include "soms.h"
 
 int main(int argc, char** argv){
+	Mapa *mapa;
+	construir_mapa(&mapa,2,2,2);
+	destruir_mapa(&mapa,2,2);
+	/*
 	char* var;
 	Nodo* nodo;
 	printf("Tamanio(*char): %d\n", sizeof(var));
@@ -31,6 +35,7 @@ int main(int argc, char** argv){
 	printf("Tamanio(Mapa): %d\n", sizeof(Mapa));
 
 	destruir_nodo(&nodo);
+	*/
 
 	return 0;
 }

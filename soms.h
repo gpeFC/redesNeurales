@@ -8,10 +8,10 @@ Mapas AutoOrganizados (SOMs) - Libreria
 #include <time.h>
 
 typedef struct nodo{
-	char gano;			// Indica si fue nodo ganador de la epoca actual de entrenamiento.
-	int coord_x;		// Coordenada x del nodo.
-	int coord_y;		// Coordenada y del nodo.
-	int ganador;		// Numero de veces que fue nodo ganador durante el entrenamiento.
+	char unsigned gano;			// Indica si fue nodo ganador de la epoca actual de entrenamiento.
+	int unsigned coord_x;		// Coordenada x del nodo.
+	int unsigned coord_y;		// Coordenada y del nodo.
+	int unsigned ganador;		// Numero de veces que fue nodo ganador durante el entrenamiento.
 	double* pesos;	// Pesos sinapticos del nodo.
 }Nodo;
 
@@ -60,14 +60,86 @@ void iniciar_nodo(Nodo** nodo, int x, int y, int dimnsn){
 	}
 }
 
-void iniciar_mapa(){
+void construir_mapa(Mapa** mapa, int unsigned dimnsn, int unsigned dim_x, int unsigned dim_y){
+	srand(time(NULL));
+	int i,j,k;
+	double* pesos;
+	Nodo** nodos;
+	Mapa nuevo;
+	nuevo.dimension = dimnsn;
+	nuevo.longitud_x = dim_x;
+	nuevo.longitud_y = dim_y;
+	nuevo.alpha = 0.0;
+	nuevo.sigma = 0.0;
+	nodos = (Nodo**)malloc(sizeof(Nodo*)*dim_y);
+	for(i=0;i<dim_y;i++){
+		*(nodos+i) = (Nodo*)malloc(sizeof(Nodo)*dim_x);
+		for(j=0;j<dim_x;j++){
+			(*(nodos+i)+j)->gano = 'n';
+			(*(nodos+i)+j)->coord_x = j;
+			(*(nodos+i)+j)->coord_y = i;
+			(*(nodos+i)+j)->ganador = 0;
+			pesos = (double*)malloc(sizeof(double)*dimnsn);	
+			for(k=0;k<dimnsn;k++)
+				*(pesos+k) = pseudoaleatorio(0,1000000);
+			(*(nodos+i)+j)->pesos = pesos;
+		}
+	}
+	
+	for(i=0;i<dim_y;i++){
+		*(nodos+i) = (Nodo*)malloc(sizeof(Nodo)*dim_x);
+		for(j=0;j<dim_x;j++){
+			printf("Gano: %c\n", (*((nodos+i)+j))->gano);
+			printf("(X,Y): (%d,%d)\n", (*(nodos+i)+j)->coord_x, (*(nodos+i)+j)->coord_y);
+			printf("Ganador: %d\n", (*(nodos+i)+j)->ganador);
+			//for(k=0;k<dimnsn;k++)
+				//printf("Peso[%d,%d](%f)\n", j, i, (*(nodos+i)+j)->(*(pesos[k])));
+		}
+	}
+
+	nuevo.nodos = nodos;
+	*mapa = &nuevo;
 }
 
 void destruir_nodo(Nodo** nodo){
-	if(nodo!=NULL)
+	if(nodo!=NULL){
 		free((*nodo)->pesos);
 		free(*nodo);
+	}
 }
 
-void destruir_mapa(){
+void destruir_mapa(Mapa** mapa, int unsigned dim_x, int unsigned dim_y){
+	if(mapa!=NULL){
+		int i,j;
+		Nodo** nodos;
+		nodos = (*mapa)->nodos;
+		for(i=0;i<dim_y;i++){
+			for(j=0;j<dim_x;j++){
+				free((*(nodos+i)+j)->pesos);
+				free((*(nodos+i)+j));
+			}
+		}
+	}
 }
+
+void ajustar_alpha(){
+}
+
+void ajustar_sigma(){
+}
+
+void ajustar_nodos(){
+}
+
+void calcular_distancia(){
+}
+
+void calcular_vecindad(){
+}
+
+void ejecutar_mapeo(){
+}
+
+void entrenar_mapeo(){
+}
+
