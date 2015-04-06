@@ -24,8 +24,8 @@ typedef struct mapa{
 	Nodo** nodos;		// Matriz de nodos (Mapa).
 }Mapa;
 
-double pseudoaleatorio(double min, double max){
-	return (drand48()*(max-min)+max);
+double pseudoaleatorio(int min, int max){
+	return (((double)(rand()%(max-min)+min))/((double)max));
 }
 
 Nodo* crear_nodo(){
@@ -45,7 +45,7 @@ void iniciar_nodo(Nodo** nodo, int x, int y, int dimnsn){
 		printf("\nNo se pudo reservar memoria para la estructura <Nodo>.\n");
 	}
 	else{
-		srand48(time(NULL));
+		srand(time(NULL));
 		int indice;
 		double* pesos;
 		nuevo->gano = 'n';
@@ -54,7 +54,7 @@ void iniciar_nodo(Nodo** nodo, int x, int y, int dimnsn){
 		nuevo->ganador = 0;
 		pesos = (double*)malloc(sizeof(double)*dimnsn);
 		for(indice=0;indice<dimnsn;indice++)
-			*(pesos+indice) = drand48();
+			*(pesos+indice) = pseudoaleatorio(0,1000000);
 		nuevo->pesos = pesos;
 		*nodo = nuevo;
 	}
