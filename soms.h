@@ -75,14 +75,7 @@ void construir_mapa(Mapa** mapa, int unsigned dimnsn, int unsigned dim_x, int un
 	for(i=0;i<dim_y;i++){
 		*(nodos+i) = (Nodo*)malloc(sizeof(Nodo)*dim_x);
 		for(j=0;j<dim_x;j++){
-			(*(nodos+i)+j)->gano = 'n';
-			(*(nodos+i)+j)->coord_x = j;
-			(*(nodos+i)+j)->coord_y = i;
-			(*(nodos+i)+j)->ganador = 0;
-			pesos = (double*)malloc(sizeof(double)*dimnsn);	
-			for(k=0;k<dimnsn;k++)
-				*(pesos+k) = pseudoaleatorio(0,1000000);
-			(*(nodos+i)+j)->pesos = pesos;
+			iniciar_nodo(((nodos+i)+j),j,i,dimnsn);
 		}
 	}
 	

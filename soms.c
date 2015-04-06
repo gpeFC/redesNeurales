@@ -10,7 +10,7 @@ Mapas AutoOrganizados (SOMs) - Aplicacion.
 int main(int argc, char** argv){
 	Mapa *mapa;
 	construir_mapa(&mapa,2,2,2);
-	destruir_mapa(&mapa,2,2);
+	//destruir_mapa(&mapa,2,2);
 	/*
 	char* var;
 	Nodo* nodo;
