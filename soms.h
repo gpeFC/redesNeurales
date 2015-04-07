@@ -8,17 +8,17 @@ Mapas AutoOrganizados (SOMs) - Libreria
 #include <time.h>
 
 typedef struct nodo{
-	char unsigned gano;			// Indica si fue nodo ganador de la epoca actual de entrenamiento.
-	int unsigned coord_x;		// Coordenada x del nodo.
-	int unsigned coord_y;		// Coordenada y del nodo.
-	int unsigned ganador;		// Numero de veces que fue nodo ganador durante el entrenamiento.
+	char gano;			// Indica si fue nodo ganador de la epoca actual de entrenamiento.
+	int coord_x;		// Coordenada x del nodo.
+	int coord_y;		// Coordenada y del nodo.
+	int ganador;		// Numero de veces que fue nodo ganador durante el entrenamiento.
 	double* pesos;	// Pesos sinapticos del nodo.
 }Nodo;
 
 typedef struct mapa{
-	int unsigned dimension;	// Tamanio/longitud del vector sinaptico de cada neurona.
-	int unsigned longitud_x;	// Longitud en el eje X para el tamanio del mapa.
-	int unsigned longitud_y;	// Longitud en el eje Y para el tamanio del mapa.
+	int dimension;	// Tamanio/longitud del vector sinaptico de cada neurona.
+	int longitud_x;	// Longitud en el eje X para el tamanio del mapa.
+	int longitud_y;	// Longitud en el eje Y para el tamanio del mapa.
 	double alpha;		// Ritmo/Factor de aprendizaje.
 	double sigma;		// Radio de vecindad.
 	Nodo** nodos;		// Matriz de nodos (Mapa).
@@ -36,6 +36,10 @@ Nodo* crear_nodo(){
 }
 
 Mapa* crear_mapa(){
+	Mapa* mapa;
+	mapa = NULL;
+	mapa = (Mapa*)malloc(sizeof(Mapa));
+	return mapa;
 }
 
 void iniciar_nodo(Nodo** nodo, int x, int y, int dimnsn){
@@ -60,17 +64,17 @@ void iniciar_nodo(Nodo** nodo, int x, int y, int dimnsn){
 	}
 }
 
-void construir_mapa(Mapa** mapa, int unsigned dimnsn, int unsigned dim_x, int unsigned dim_y){
+void iniciar_mapa(Mapa** mapa, int dimnsn, int dim_x, int dim_y){
 	srand(time(NULL));
-	int i,j,k;
-	double* pesos;
+	int i,j;
 	Nodo** nodos;
-	Mapa nuevo;
-	nuevo.dimension = dimnsn;
-	nuevo.longitud_x = dim_x;
-	nuevo.longitud_y = dim_y;
-	nuevo.alpha = 0.0;
-	nuevo.sigma = 0.0;
+	Mapa* nuevo;
+	nuevo = crear_mapa();
+	nuevo->dimension = dimnsn;
+	nuevo->longitud_x = dim_x;
+	nuevo->longitud_y = dim_y;
+	nuevo->alpha = 0.0;
+	nuevo->sigma = 0.0;
 	nodos = (Nodo**)malloc(sizeof(Nodo*)*dim_y);
 	for(i=0;i<dim_y;i++){
 		*(nodos+i) = (Nodo*)malloc(sizeof(Nodo)*dim_x);
@@ -78,20 +82,8 @@ void construir_mapa(Mapa** mapa, int unsigned dimnsn, int unsigned dim_x, int un
 			iniciar_nodo(((nodos+i)+j),j,i,dimnsn);
 		}
 	}
-	
-	for(i=0;i<dim_y;i++){
-		*(nodos+i) = (Nodo*)malloc(sizeof(Nodo)*dim_x);
-		for(j=0;j<dim_x;j++){
-			printf("Gano: %c\n", (*((nodos+i)+j))->gano);
-			printf("(X,Y): (%d,%d)\n", (*(nodos+i)+j)->coord_x, (*(nodos+i)+j)->coord_y);
-			printf("Ganador: %d\n", (*(nodos+i)+j)->ganador);
-			//for(k=0;k<dimnsn;k++)
-				//printf("Peso[%d,%d](%f)\n", j, i, (*(nodos+i)+j)->(*(pesos[k])));
-		}
-	}
-
-	nuevo.nodos = nodos;
-	*mapa = &nuevo;
+	nuevo->nodos = nodos;
+	*mapa = nuevo;
 }
 
 void destruir_nodo(Nodo** nodo){
@@ -101,17 +93,16 @@ void destruir_nodo(Nodo** nodo){
 	}
 }
 
-void destruir_mapa(Mapa** mapa, int unsigned dim_x, int unsigned dim_y){
+void destruir_mapa(Mapa** mapa, int dim_x, int dim_y){
 	if(mapa!=NULL){
 		int i,j;
 		Nodo** nodos;
 		nodos = (*mapa)->nodos;
 		for(i=0;i<dim_y;i++){
-			for(j=0;j<dim_x;j++){
-				free((*(nodos+i)+j)->pesos);
-				free((*(nodos+i)+j));
-			}
+			for(j=0;j<dim_x;j++)
+				destruir_nodo(((nodos+i)+j));
 		}
+		free(*mapa);
 	}
 }
 
@@ -134,5 +125,6 @@ void ejecutar_mapeo(){
 }
 
 void entrenar_mapeo(){
+	srand(time(NULL));
 }
 
