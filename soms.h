@@ -57,6 +57,26 @@ void mostrar_datos_mapa(Mapa* mapa){
 }
 
 void iniciar_nodo(Nodo** nodo, int x, int y, int dimnsn){
+	/*
+	srand(time(NULL));
+	if((*nodo)==NULL){
+		printf("\nNo se pudo reservar memoria para la estructura <Nodo>.\n");
+	}
+	else{
+		int indice;
+		double* pesos;
+		(*nodo)->gano = 'n';
+		(*nodo)->ganador = 0;
+		(*nodo)->coord_x = x;
+		(*nodo)->coord_y = y;
+		pesos = (double*)malloc(sizeof(double)*dimnsn);
+		for(indice=0;indice<dimnsn;indice++)
+			*(pesos+indice) = pseudoaleatorio(0,1000000);
+		nuevo->pesos = pesos;
+		for(indice=0;indice<dimnsn;indice++)
+			(*nodo)->pesos[indice] = pseudoaleatorio(0,1000000);
+	}
+	*/
 	Nodo* nuevo;
 	nuevo = NULL;
 	nuevo = (Nodo*)malloc(sizeof(Nodo));
@@ -77,6 +97,7 @@ void iniciar_nodo(Nodo** nodo, int x, int y, int dimnsn){
 		nuevo->pesos = pesos;
 		*nodo = nuevo;
 	}
+	
 }
 
 void iniciar_mapa(Mapa** mapa, int dimnsn, int dim_x, int dim_y){

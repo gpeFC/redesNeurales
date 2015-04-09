@@ -8,7 +8,7 @@ Mapas AutoOrganizados (SOMs) - Aplicacion.
 #include "soms.h"
 
 int main(){
-	int dimns = 3;
+	int dimns = 2;
 	int dim_x = 1;
 	int dim_y = 1;
 	if(dimns && dim_x && dim_y){
