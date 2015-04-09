@@ -7,22 +7,20 @@ Mapas AutoOrganizados (SOMs) - Aplicacion.
 #include <string.h>
 #include "soms.h"
 
-int main(int argc, char** argv){
-	int i,j,k;
-	Mapa* mapa;
-	iniciar_mapa(&mapa,2,2,2);
-	printf("Mapa-dim: %d\n", mapa->dimension);
-	printf("Mapa-X: %d\n", mapa->longitud_x);
-	printf("Mapa-Y: %d\n", mapa->longitud_y);
-	printf("Mapa-Alpha: %f\n", mapa->alpha);
-	printf("Mapa-Sigma: %f\n", mapa->sigma);
-	for(i=0;i<mapa->longitud_y;i++){
-		for(j=0;j<mapa->longitud_x;j++){
-			printf("Nodo-gano: %c\n", (((mapa->nodos)+i)+j)->gano);
-		}
+int main(){
+	int dimns = 3;
+	int dim_x = 1;
+	int dim_y = 1;
+	if(dimns && dim_x && dim_y){
+		Mapa* mapa;
+		iniciar_mapa(&mapa,dimns,dim_x,dim_y);
+		mostrar_datos_mapa(mapa);
+		destruir_mapa(&mapa,dim_x,dim_y);
+		printf("\nLibero la memoria.\n");
 	}
-	
-	destruir_mapa(&mapa,2,2);
+	else{
+		printf("\n<dimension> <dim_X> <dim_Y>\n");
+	}
 
 	return 0;
 }

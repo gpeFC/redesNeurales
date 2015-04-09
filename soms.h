@@ -8,10 +8,10 @@ Mapas AutoOrganizados (SOMs) - Libreria
 #include <time.h>
 
 typedef struct nodo{
-	char gano;			// Indica si fue nodo ganador de la epoca actual de entrenamiento.
-	int coord_x;		// Coordenada x del nodo.
-	int coord_y;		// Coordenada y del nodo.
-	int ganador;		// Numero de veces que fue nodo ganador durante el entrenamiento.
+	char gano;		// Indica si fue nodo ganador de la epoca actual de entrenamiento.
+	int ganador;	// Numero de veces que fue nodo ganador durante el entrenamiento.
+	int coord_x;	// Coordenada x del nodo.
+	int coord_y;	// Coordenada y del nodo.	
 	double* pesos;	// Pesos sinapticos del nodo.
 }Nodo;
 
@@ -19,32 +19,47 @@ typedef struct mapa{
 	int dimension;	// Tamanio/longitud del vector sinaptico de cada neurona.
 	int longitud_x;	// Longitud en el eje X para el tamanio del mapa.
 	int longitud_y;	// Longitud en el eje Y para el tamanio del mapa.
-	double alpha;		// Ritmo/Factor de aprendizaje.
-	double sigma;		// Radio de vecindad.
-	Nodo** nodos;		// Matriz de nodos (Mapa).
+	double alpha;	// Ritmo/Factor de aprendizaje.
+	double sigma;	// Radio de vecindad.
+	Nodo** nodos;	// Matriz de nodos (Mapa).
 }Mapa;
 
 double pseudoaleatorio(int min, int max){
 	return (((double)(rand()%(max-min)+min))/((double)max));
 }
 
-Nodo* crear_nodo(){
+void mostrar_datos_nodo(Nodo** nodos, int dimnsn, int dim_x, int dim_y){
+	int i,j,k;
 	Nodo* nodo;
-	nodo = NULL;
-	nodo = (Nodo*)malloc(sizeof(Nodo));
-	return nodo;
+	for(i=0;i<dim_y;i++){
+		for(j=0;j<dim_x;j++){
+			nodo = *((nodos+i)+j);
+			printf("Mapa-Nodo(%d,%d)\n", j, i);
+			printf("\tGano: %c", nodo->gano);
+			printf("\t\tGanador: %d\n", nodo->ganador);
+			printf("\tCoord_X: %d", nodo->coord_x);
+			printf("\tCoord_Y: %d\n", nodo->coord_y);
+			printf("\tPesos(%d)\n", dimnsn);
+			for(k=0;k<dimnsn;k++){
+				printf("\t\tPesos[%d]: %f\n", (k+1), nodo->pesos[k]);
+			}
+		}
+	}
 }
 
-Mapa* crear_mapa(){
-	Mapa* mapa;
-	mapa = NULL;
-	mapa = (Mapa*)malloc(sizeof(Mapa));
-	return mapa;
+void mostrar_datos_mapa(Mapa* mapa){
+	printf("Mapa-dim: %d\n", mapa->dimension);
+	printf("Mapa-X: %d\n", mapa->longitud_x);
+	printf("Mapa-Y: %d\n", mapa->longitud_y);
+	printf("Mapa-Alpha: %f\n", mapa->alpha);
+	printf("Mapa-Sigma: %f\n", mapa->sigma);
+	mostrar_datos_nodo((mapa->nodos), mapa->dimension, mapa->longitud_x, mapa->longitud_y);
 }
 
 void iniciar_nodo(Nodo** nodo, int x, int y, int dimnsn){
 	Nodo* nuevo;
-	nuevo = crear_nodo();
+	nuevo = NULL;
+	nuevo = (Nodo*)malloc(sizeof(Nodo));
 	if(nuevo==NULL){
 		printf("\nNo se pudo reservar memoria para la estructura <Nodo>.\n");
 	}
@@ -69,27 +84,35 @@ void iniciar_mapa(Mapa** mapa, int dimnsn, int dim_x, int dim_y){
 	int i,j;
 	Nodo** nodos;
 	Mapa* nuevo;
-	nuevo = crear_mapa();
-	nuevo->dimension = dimnsn;
-	nuevo->longitud_x = dim_x;
-	nuevo->longitud_y = dim_y;
-	nuevo->alpha = 0.0;
-	nuevo->sigma = 0.0;
-	nodos = (Nodo**)malloc(sizeof(Nodo*)*dim_y);
-	for(i=0;i<dim_y;i++){
-		*(nodos+i) = (Nodo*)malloc(sizeof(Nodo)*dim_x);
-		for(j=0;j<dim_x;j++){
-			iniciar_nodo(((nodos+i)+j),j,i,dimnsn);
-		}
+	nuevo = NULL;
+	nuevo = (Mapa*)malloc(sizeof(Mapa));
+	if(nuevo==NULL){
+		printf("\nNo se pudo reservar memoria para la estructura <Mapa>.\n");
 	}
-	nuevo->nodos = nodos;
-	*mapa = nuevo;
+	else{
+		nuevo->dimension = dimnsn;
+		nuevo->longitud_x = dim_x;
+		nuevo->longitud_y = dim_y;
+		nuevo->alpha = 0.0;
+		nuevo->sigma = 0.0;
+		nodos = (Nodo**)malloc(sizeof(Nodo*)*dim_y);
+		for(i=0;i<dim_y;i++){
+			*(nodos+i) = (Nodo*)malloc(sizeof(Nodo)*dim_x);
+			for(j=0;j<dim_x;j++){
+				iniciar_nodo(((nodos+i)+j),j,i,dimnsn);
+			}
+		}
+		nuevo->nodos = nodos;
+		*mapa = nuevo;
+	}
 }
 
 void destruir_nodo(Nodo** nodo){
 	if(nodo!=NULL){
 		free((*nodo)->pesos);
-		free(*nodo);
+		//free(*nodo);
+		// No liberar la referencia del nodo porque es parte de un vector, se debe liberar la
+		// referencia del primer nodo del vector solamente.
 	}
 }
 
