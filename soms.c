@@ -8,14 +8,16 @@ Mapas AutoOrganizados (SOMs) - Aplicacion.
 #include "soms.h"
 
 int main(){
-	int dimns = 2;
+	int dimns = 1;
 	int dim_x = 1;
 	int dim_y = 1;
+
 	if(dimns && dim_x && dim_y){
 		Mapa* mapa;
-		iniciar_mapa(&mapa,dimns,dim_x,dim_y);
-		mostrar_datos_mapa(mapa);
-		destruir_mapa(&mapa,dim_x,dim_y);
+		iniciar_mapa(mapa,dimns,dim_x,dim_y);
+		printf("\nInicio mapa\n");
+		//mostrar_datos_mapa(mapa);
+		liberar_mapa(mapa,dim_x,dim_y);
 		printf("\nLibero la memoria.\n");
 	}
 	else{
