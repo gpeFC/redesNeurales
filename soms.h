@@ -31,3 +31,158 @@ double pseudoaleatorio(int min, int max){
 	return (((double)(rand()%(max-min)+min))/((double)max));
 }
 
+void imprime_pesos(double* pesos, int dimnsn){
+	/* codigo */
+	if(pesos){
+		/* sentencias */
+		int i;
+		for(i=0;i<dimnsn;i++){
+			/* sentencias */
+			printf("Peso(%d): %f\n", i, pesos[i]);
+		}
+	}
+}
+
+void imprime_nodo(Nodo* nodo, int dimnsn){
+	/* codigo */
+	if(nodo){
+		/* sentencias */
+		printf("Gano: %c\n", nodo->gano);
+		printf("Ganador: %d\n", nodo->ganador);
+		printf("Coords: (%d,%d)\n", nodo->coord_x, nodo->coord_y);
+		imprime_pesos(nodo->pesos, dimnsn);
+	}
+}
+
+double* crear_pesos(int dimnsn){
+	/* codigo */
+	double* pesos;
+	pesos = NULL;
+	pesos = (double*)malloc(sizeof(double)*dimnsn);
+	if(!pesos){
+		/* sentencias */
+		printf("No se pudo reservar memoria.\n");
+	}
+	else{
+		/* sentencias */
+		int i;
+		for(i=0;i<dimnsn;i++){
+			/* sentencias */
+			pesos[i] = pseudoaleatorio(0,1000000);
+		}
+	}
+	return pesos;
+}
+
+Nodo* crear_nodo(int x, int y, int dimnsn){
+	/* codigo */
+	Nodo* nodo;
+	nodo = NULL;
+	nodo = (Nodo*)malloc(sizeof(Nodo));
+	if(!nodo){
+		/* sentencias */
+		printf("No se pudo reservar memoria.\n");
+	}
+	else{
+		/* sentencias */
+		nodo->gano = 'n';
+		nodo->ganador = 0;
+		nodo->coord_x = x;
+		nodo->coord_y = y;
+		nodo->pesos = crear_pesos(dimnsn);
+	}
+	return nodo;
+}
+
+Nodo* crear_nodos(int dim_x, int y, int dimnsn){
+	/* codigo */
+	Nodo* nodos;
+	nodos = NULL;
+	nodos = (Nodo*)malloc(sizeof(Nodo)*dim_x);
+	if(!nodos){
+		/* sentencias */
+		printf("No se pudo reservar memoria.\n");
+	}
+	else{
+		/* sentencias */
+		int i;
+		for(i=0;i<dim_x;i++){
+			/* sentencias */
+			nodos[i].gano = 'n';
+			nodos[i].ganador = 0;
+			nodos[i].coord_x = i;
+			nodos[i].coord_y = y;
+			nodos[i].pesos = crear_pesos(dimnsn);
+		}
+	}
+	return nodos;
+}
+
+Mapa* crear_mapa(int dimnsn, int dim_x, int dim_y){
+	/* codigo */
+	Mapa* mapa;
+	mapa = NULL;
+	mapa = (Mapa*)malloc(sizeof(Mapa));
+	if(!mapa){
+		/* sentencias */
+		printf("No se pudo reservar memoria.\n");
+	}
+	else{
+		/* sentencias */
+		mapa->dimension = dimnsn;
+		mapa->longitud_x = dim_x;
+		mapa->longitud_y = dim_y;
+		mapa->alpha = 0.0;
+		mapa->sigma = 0.0;
+		mapa->nodos = NULL;
+		mapa->nodos = (Nodo**)malloc(sizeof(Nodo*)*dim_y);
+		if(!(mapa->nodos)){
+			/* sentencias */
+			printf("No se pudo reservar memoria.\n");
+		}
+		else{
+			/* sentencias */
+			int i,j;
+			for(i=0;i<dim_y;i++){
+				/* sentencias */
+				mapa->nodos[i] = NULL;
+				mapa->nodos[i] = (Nodo*)malloc(sizeof(Nodo)*dim_x);
+				if(!(mapa->nodos[i])){
+					/* sentencias */
+					printf("No se pudo reservar memoria.\n");
+				}
+				else{
+					/* sentencias */
+					mapa->nodos[i] = crear_nodos(dim_x,i,dimnsn);
+					for(j=0;j<dim_x;j++){
+						/* sentencias */
+						//mapa->nodos[i][j] = crear_nodo(j,i,dimnsn);
+					}
+				}
+			}
+		}
+	}
+	return mapa;
+}
+
+void borrar_pesos(double* pesos){
+	/* codigo */
+	if(pesos){
+		/* sentencias */
+		free(pesos);
+		printf("\nlibera-pesos\n");
+	}
+}
+
+void borrar_nodos(Nodo** nodos, int dim_x){
+	/* codigo */
+	if(*nodos){
+		/* sentencias */
+		int i;
+		for(i=0;i<dim_x;i++){
+			/* sentencias */
+			borrar_pesos(nodos[i]->pesos);
+		}
+		free(*nodos);
+	}
+}
