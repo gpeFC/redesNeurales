@@ -54,6 +54,20 @@ void imprime_nodo(Nodo* nodo, int dimnsn){
 	}
 }
 
+void imprime_mapa(Mapa* mapa, int dim_y, int dim_x, int dimnsn){
+	/* codigo */
+	if(mapa){
+		/* sentencias */
+		int i,j;
+		printf("\tMapa AutoOrganizado.\n");
+		printf("Dimension: %d\n", mapa->dimension);
+		printf("Longitud: (%d,%d)\n", mapa->longitud_x,mapa->longitud_y);
+		printf("RdA: %f\n", mapa->alpha);
+		printf("RdV: %f\n", mapa->sigma);
+		printf("Nodos:\n");
+	}
+}
+
 double* crear_pesos(int dimnsn){
 	/* codigo */
 	double* pesos;
@@ -146,19 +160,7 @@ Mapa* crear_mapa(int dimnsn, int dim_x, int dim_y){
 			for(i=0;i<dim_y;i++){
 				/* sentencias */
 				mapa->nodos[i] = NULL;
-				mapa->nodos[i] = (Nodo*)malloc(sizeof(Nodo)*dim_x);
-				if(!(mapa->nodos[i])){
-					/* sentencias */
-					printf("No se pudo reservar memoria.\n");
-				}
-				else{
-					/* sentencias */
-					mapa->nodos[i] = crear_nodos(dim_x,i,dimnsn);
-					for(j=0;j<dim_x;j++){
-						/* sentencias */
-						//mapa->nodos[i][j] = crear_nodo(j,i,dimnsn);
-					}
-				}
+				mapa->nodos[i] = crear_nodos(dim_x,i,dimnsn);
 			}
 		}
 	}
@@ -171,18 +173,36 @@ void borrar_pesos(double* pesos){
 		/* sentencias */
 		free(pesos);
 		printf("\nlibera-pesos\n");
+		pesos = NULL;
 	}
 }
 
-void borrar_nodos(Nodo** nodos, int dim_x){
+void borrar_nodos(Nodo* nodos, int dim_x){
 	/* codigo */
-	if(*nodos){
+	if(nodos){
 		/* sentencias */
 		int i;
 		for(i=0;i<dim_x;i++){
 			/* sentencias */
-			borrar_pesos(nodos[i]->pesos);
+			borrar_pesos((nodos+i)->pesos);
 		}
-		free(*nodos);
+		free(nodos);
+		printf("\nlibera-nodos\n");
+		nodos = NULL;
+	}
+}
+
+void borrar_mapa(Mapa* mapa, int dim_x, int dim_y){
+	/* codigo */
+	if(mapa){
+		/* sentencias */
+		int i;
+		for(i=0;i<dim_y;i++){
+			/* sentencias */
+			borrar_nodos(mapa->nodos[i],dim_x);
+		}
+		free(mapa);
+		printf("\nlibera-mapa\n");
+		mapa = NULL;
 	}
 }
