@@ -5,10 +5,11 @@ Mapas AutoOrganizados (SOMs) - Libreria
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include <time.h>
 
 typedef struct nodo{
-	/* Estructura para almacenar datos de un nodo de un mapa autoorganizado. */
+	/* Estructura para almacenar datos de un nodo en un mapa autoorganizado. */
 	char gano;		// Indica si fue nodo ganador de la epoca actual de entrenamiento.
 	int ganador;	// Numero de veces que fue nodo ganador durante el entrenamiento.
 	int coord_x;	// Coordenada x del nodo.
@@ -26,11 +27,6 @@ typedef struct mapa{
 	Nodo** nodos;	// Matriz de nodos (Mapa).
 }Mapa;
 
-double pseudoaleatorio(int min, int max){
-	/* Funcion para generar y devolver un numero real pseudoaleatorio de un rango determinado. */
-	return (((double)(rand()%(max-min)+min))/((double)max));
-}
-
 void imprime_pesos(double* pesos, int dimnsn){
 	/* codigo */
 	if(pesos){
@@ -38,34 +34,47 @@ void imprime_pesos(double* pesos, int dimnsn){
 		int i;
 		for(i=0;i<dimnsn;i++){
 			/* sentencias */
-			printf("Peso(%d): %f\n", i, pesos[i]);
+			printf("(%f)", *(pesos+i));
+		}
+		printf("\n");
+	}
+}
+
+void imprime_nodos(Nodo** nodos, int dimnsn, int dim_x, int dim_y){
+	/* codigo */
+	if(nodos){
+		/* sentencias */
+		int i,j;
+		for(i=0;i<dim_y;i++){
+			/* sentencias */
+			for(j=0;j<dim_x;j++){
+				/* sentencias */
+				printf("Nodo[%d,%d]\n", i,j);
+				printf(" Gano: %c\n", (*(nodos+i)+j)->gano);
+				printf(" Ganador: %d\n", (*(nodos+i)+j)->ganador);
+				printf(" Pesos[%d]: ", dimnsn);
+				imprime_pesos((*(nodos+i)+j)->pesos,dimnsn);
+			}
 		}
 	}
 }
 
-void imprime_nodo(Nodo* nodo, int dimnsn){
-	/* codigo */
-	if(nodo){
-		/* sentencias */
-		printf("Gano: %c\n", nodo->gano);
-		printf("Ganador: %d\n", nodo->ganador);
-		printf("Coords: (%d,%d)\n", nodo->coord_x, nodo->coord_y);
-		imprime_pesos(nodo->pesos, dimnsn);
-	}
-}
-
-void imprime_mapa(Mapa* mapa, int dim_y, int dim_x, int dimnsn){
+void imprime_mapa(Mapa* mapa){
 	/* codigo */
 	if(mapa){
 		/* sentencias */
-		int i,j;
-		printf("\tMapa AutoOrganizado.\n");
+		printf("Mapa AutoOrganizado.\n");
 		printf("Dimension: %d\n", mapa->dimension);
-		printf("Longitud: (%d,%d)\n", mapa->longitud_x,mapa->longitud_y);
-		printf("RdA: %f\n", mapa->alpha);
-		printf("RdV: %f\n", mapa->sigma);
-		printf("Nodos:\n");
+		printf("Tamanio: (%d,%d)\n", mapa->longitud_x,mapa->longitud_y);
+		printf("Alpha: %f\n", mapa->alpha);
+		printf("Sigma: %f\n", mapa->sigma);
+		imprime_nodos(mapa->nodos,mapa->dimension,mapa->longitud_x,mapa->longitud_y);
 	}
+}
+
+double pseudoaleatorio(int min, int max){
+	/* Funcion para generar y devolver un numero real pseudoaleatorio de un rango determinado. */
+	return (((double)(rand()%(max-min)+min))/((double)max));
 }
 
 double* crear_pesos(int dimnsn){
@@ -80,59 +89,44 @@ double* crear_pesos(int dimnsn){
 	else{
 		/* sentencias */
 		int i;
+		srand(time(NULL));
 		for(i=0;i<dimnsn;i++){
 			/* sentencias */
-			pesos[i] = pseudoaleatorio(0,1000000);
+			*(pesos+i) = pseudoaleatorio(0,1000000);
 		}
 	}
 	return pesos;
 }
 
-Nodo* crear_nodo(int x, int y, int dimnsn){
+Nodo** crear_nodos(int dimnsn, int dim_x, int dim_y){
 	/* codigo */
-	Nodo* nodo;
-	nodo = NULL;
-	nodo = (Nodo*)malloc(sizeof(Nodo));
-	if(!nodo){
-		/* sentencias */
-		printf("No se pudo reservar memoria.\n");
-	}
-	else{
-		/* sentencias */
-		nodo->gano = 'n';
-		nodo->ganador = 0;
-		nodo->coord_x = x;
-		nodo->coord_y = y;
-		nodo->pesos = crear_pesos(dimnsn);
-	}
-	return nodo;
-}
-
-Nodo* crear_nodos(int dim_x, int y, int dimnsn){
-	/* codigo */
-	Nodo* nodos;
+	Nodo** nodos;
 	nodos = NULL;
-	nodos = (Nodo*)malloc(sizeof(Nodo)*dim_x);
+	nodos = (Nodo**)malloc(sizeof(Nodo*)*dim_y);
 	if(!nodos){
 		/* sentencias */
 		printf("No se pudo reservar memoria.\n");
 	}
 	else{
 		/* sentencias */
-		int i;
-		for(i=0;i<dim_x;i++){
+		int i,j;
+		for(i=0;i<dim_y;i++){
 			/* sentencias */
-			nodos[i].gano = 'n';
-			nodos[i].ganador = 0;
-			nodos[i].coord_x = i;
-			nodos[i].coord_y = y;
-			nodos[i].pesos = crear_pesos(dimnsn);
+			*(nodos+i) = (Nodo*)malloc(sizeof(Nodo)*dim_x);
+			for(j=0;j<dim_x;j++){
+				/* sentencias */
+				(*(nodos+i)+j)->gano = 'n';
+				(*(nodos+i)+j)->ganador = 0;
+				(*(nodos+i)+j)->coord_x = j;
+				(*(nodos+i)+j)->coord_y = i;
+				(*(nodos+i)+j)->pesos = crear_pesos(dimnsn);
+			}
 		}
 	}
 	return nodos;
 }
 
-Mapa* crear_mapa(int dimnsn, int dim_x, int dim_y){
+Mapa* crear_mapa(int dimnsn, int long_x, int long_y){
 	/* codigo */
 	Mapa* mapa;
 	mapa = NULL;
@@ -144,27 +138,23 @@ Mapa* crear_mapa(int dimnsn, int dim_x, int dim_y){
 	else{
 		/* sentencias */
 		mapa->dimension = dimnsn;
-		mapa->longitud_x = dim_x;
-		mapa->longitud_y = dim_y;
+		mapa->longitud_x = long_x;
+		mapa->longitud_y = long_y;
 		mapa->alpha = 0.0;
 		mapa->sigma = 0.0;
-		mapa->nodos = NULL;
-		mapa->nodos = (Nodo**)malloc(sizeof(Nodo*)*dim_y);
-		if(!(mapa->nodos)){
-			/* sentencias */
-			printf("No se pudo reservar memoria.\n");
-		}
-		else{
-			/* sentencias */
-			int i,j;
-			for(i=0;i<dim_y;i++){
-				/* sentencias */
-				mapa->nodos[i] = NULL;
-				mapa->nodos[i] = crear_nodos(dim_x,i,dimnsn);
-			}
-		}
+		mapa->nodos = crear_nodos(dimnsn,long_x,long_y);
 	}
 	return mapa;
+}
+
+void ajustar_alpha(int epocas, int actual, double* alpha, double alpha_ini, double alpha_fin){
+	/* codigo */
+	*alpha = alpha_ini * pow((alpha_fin/alpha_ini),(actual/epocas));
+}
+
+void ajustar_sigma(int epocas, int actual, double* sigma, double sigma_ini, double sigma_fin){
+	/* codigo */
+	*sigma = sigma_ini * pow((sigma_fin/sigma_ini),(actual/epocas));
 }
 
 void borrar_pesos(double* pesos){
@@ -172,37 +162,33 @@ void borrar_pesos(double* pesos){
 	if(pesos){
 		/* sentencias */
 		free(pesos);
-		printf("\nlibera-pesos\n");
 		pesos = NULL;
 	}
 }
 
-void borrar_nodos(Nodo* nodos, int dim_x){
+void borrar_nodos(Nodo** nodos, int dim_x, int dim_y){
 	/* codigo */
 	if(nodos){
 		/* sentencias */
-		int i;
-		for(i=0;i<dim_x;i++){
+		int i,j;
+		for(i=0;i<dim_y;i++){
 			/* sentencias */
-			borrar_pesos((nodos+i)->pesos);
+			for(j=0;j<dim_x;j++){
+				/* sentencias */
+				borrar_pesos((*(nodos+i)+j)->pesos);
+			}
+			free(*(nodos+i));
+			*(nodos+i) = NULL;
 		}
-		free(nodos);
-		printf("\nlibera-nodos\n");
-		nodos = NULL;
 	}
 }
 
-void borrar_mapa(Mapa* mapa, int dim_x, int dim_y){
+void borrar_mapa(Mapa* mapa, int long_x, int long_y){
 	/* codigo */
 	if(mapa){
 		/* sentencias */
-		int i;
-		for(i=0;i<dim_y;i++){
-			/* sentencias */
-			borrar_nodos(mapa->nodos[i],dim_x);
-		}
+		borrar_nodos(mapa->nodos,long_x,long_y);
 		free(mapa);
-		printf("\nlibera-mapa\n");
 		mapa = NULL;
 	}
 }
