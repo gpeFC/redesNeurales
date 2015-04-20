@@ -157,6 +157,33 @@ void ajustar_sigma(int epocas, int actual, double* sigma, double sigma_ini, doub
 	*sigma = sigma_ini * pow((sigma_fin/sigma_ini),(actual/epocas));
 }
 
+double calcular_distancia(double* vector_entrada, double* vector_neuronal, int dimnsn){
+	/* codigo */
+	int i;
+	double distancia;
+	distancia = 0.0;
+	for(i=0;i<dimnsn;i++){
+		/* sentencias */
+		distancia = distancia + (pow(((*(vector_entrada+i)) - (*(vector_neuronal+i))), 2));
+	}
+	distancia = sqrt(distancia);
+	return distancia;
+}
+
+double calcular_vecindad(double sigma, double* vector_vecino, double* vector_centro, int dimnsn){
+	/* codigo */
+	int i;
+	double vecindad;
+	vecindad = 0.0;
+	for(i=0;i<dimnsn;i++){
+		/* sentencias */
+		vecindad = vecindad + ((*(vector_vecino+i)) - (*(vector_centro)));
+	}
+	vecindad = pow(vecindad, 2);
+	vecindad = exp(-((vecindad) / (2 * pow(sigma, 2))));
+	return vecindad;
+}
+
 void borrar_pesos(double* pesos){
 	/* codigo */
 	if(pesos){
