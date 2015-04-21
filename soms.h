@@ -8,6 +8,7 @@ Mapas AutoOrganizados (SOMs) - Libreria
 #include <math.h>
 #include <time.h>
 
+
 typedef struct nodo{
 	/* Estructura para almacenar datos de un nodo en un mapa autoorganizado. */
 	char gano;		// Indica si fue nodo ganador de la epoca actual de entrenamiento.
@@ -26,6 +27,24 @@ typedef struct mapa{
 	double sigma;	// Radio de vecindad.
 	Nodo** nodos;	// Matriz de nodos (Mapa).
 }Mapa;
+
+
+void imprime_pesos(double* pesos, int dimnsn);
+void imprime_nodos(Nodo** nodos, int dimnsn, int dim_x, int dim_y);
+void imprime_mapa(Mapa* mapa);
+double pseudoaleatorio(int min, int max);
+double* crear_pesos(int dimnsn);
+Nodo** crear_nodos(int dimnsn, int dim_x, int dim_y);
+Mapa* crear_mapa(int dimnsn, int long_x, int long_y);
+void ajustar_alpha(int epocas, int actual, double* alpha, double alpha_ini, double alpha_fin);
+void ajustar_sigma(int epocas, int actual, double* sigma, double sigma_ini, double sigma_fin);
+void ajustar_pesos(Mapa* mapa, double* vector_entrada, double* vector_neuronal);
+double calcular_distancia(double* vector_entrada, double* vector_neuronal, int dimnsn);
+double calcular_vecindad(double sigma, double* vector_vecino, double* vector_centro, int dimnsn);
+void borrar_pesos(double* pesos);
+void borrar_nodos(Nodo** nodos, int dim_x, int dim_y);
+void borrar_mapa(Mapa* mapa, int long_x, int long_y);
+
 
 void imprime_pesos(double* pesos, int dimnsn){
 	/* codigo */
@@ -155,6 +174,10 @@ void ajustar_alpha(int epocas, int actual, double* alpha, double alpha_ini, doub
 void ajustar_sigma(int epocas, int actual, double* sigma, double sigma_ini, double sigma_fin){
 	/* codigo */
 	*sigma = sigma_ini * pow((sigma_fin/sigma_ini),(actual/epocas));
+}
+
+void ajustar_pesos(Mapa* mapa, double* vector_entrada, double* vector_neuronal){
+	/* codigo */
 }
 
 double calcular_distancia(double* vector_entrada, double* vector_neuronal, int dimnsn){
